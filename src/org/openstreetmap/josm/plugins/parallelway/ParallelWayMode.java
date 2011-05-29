@@ -208,7 +208,7 @@ public class ParallelWayMode extends MapMode implements AWTEventListener, MapVie
     private void updateAllPreferences() {
         updateModeLocalPreferences();
         // @formatter:off
-        initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay", -1 /* default set in owner */);
+        initialMoveDelay = Main.pref.getInteger(prefKey("initial-move-delay"), -1);
         // @formatter:on
     }
 
