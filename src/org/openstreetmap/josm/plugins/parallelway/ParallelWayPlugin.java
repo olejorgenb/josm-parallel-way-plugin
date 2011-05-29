@@ -1,3 +1,9 @@
+/*
+ * Encoding: UTF-8
+ * Licence:  GPL v2 or later
+ * Author:   Ole Jørgen Brønner <olejorgen@yahoo.no>, 2011
+ */
+
 package org.openstreetmap.josm.plugins.parallelway;
 
 import org.openstreetmap.josm.Main;

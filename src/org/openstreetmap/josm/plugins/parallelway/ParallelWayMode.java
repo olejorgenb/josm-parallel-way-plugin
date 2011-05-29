@@ -1,4 +1,8 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
+/*
+ * Encoding: UTF-8
+ * Licence:  GPL v2 or later
+ * Author:   Ole Jørgen Brønner <olejorgen@yahoo.no>, 2011
+ */
 
 package org.openstreetmap.josm.plugins.parallelway;
 
