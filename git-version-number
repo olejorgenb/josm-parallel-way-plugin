@@ -1,0 +1,27 @@
+#!/bin/zsh
+
+branch_name() {
+	git branch | grep -e "^[ \t]*\*" | sed 's/^[ \t]*\*[ \t]*//'
+}
+commit_count() {
+	git rev-list "$1" | wc -l
+}
+commit_count_from_to() {
+	git rev-list "$1..$2" | wc -l
+}
+sha1() {
+	git rev-list --abbrev-commit --max-count=1 HEAD
+}
+
+BRANCH=$(branch_name)
+MASTER_C=$(commit_count master)
+
+if [[ $BRANCH != master ]]; then
+	BRANCH_MASTER_C=$(commit_count_from_to master "$BRANCH")
+	MASTER_C=$(($(commit_count "$BRANCH") - $BRANCH_MASTER_C))
+	BRANCH_EXTRA=".${BRANCH_MASTER_C}"
+fi
+
+echo ${MASTER_C}.${BRANCH}${BRANCH_EXTRA}-$(sha1)
+
+

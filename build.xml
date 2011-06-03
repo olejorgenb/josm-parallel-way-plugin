@@ -35,10 +35,7 @@
     <property name="plugin.main.version" value="" />
 
 
-    <!--
-      ************************************************
-      ** should not be necessary to change the following properties
-     -->
+    <!-- should not be necessary to change the following properties -->
     <property name="josm"                   location="../../core/dist/josm-custom.jar"/>
     <property name="plugin.build.dir"       value="build"/>
     <property name="plugin.src.dir"         value="src"/>
@@ -48,20 +45,12 @@
     <property name="plugin.dist.dir"        value="../../dist"/>
     <property name="plugin.jar"             value="${plugin.dist.dir}/${ant.project.name}.jar"/>
 
-    <!--
-    **********************************************************
-    ** init - initializes the build
-    **********************************************************
-    -->
+    <!-- init - initializes the build -->
     <target name="init">
         <mkdir dir="${plugin.build.dir}"/>
     </target>
 
-    <!--
-    **********************************************************
-    ** compile - complies the source tree
-    **********************************************************
-    -->
+	<!-- compile - complies the source tree -->
     <target name="compile" depends="init">
         <echo message="compiling sources for  ${plugin.jar} ... "/>
         <javac srcdir="src" classpath="${josm}" debug="true" destdir="${plugin.build.dir}">
@@ -70,11 +59,7 @@
         </javac>
     </target>
 
-    <!--
-    **********************************************************
-    ** dist - creates the plugin jar
-    **********************************************************
-    -->
+	<!-- dist - creates the plugin jar -->
     <target name="dist" depends="compile,revision">
         <echo message="creating ${ant.project.name}.jar ... "/>
         <copy todir="${plugin.build.dir}/images">
@@ -87,36 +72,22 @@
             </fileset>
         </copy>
         <jar destfile="${plugin.jar}" basedir="${plugin.build.dir}">
-            <!--
-        ************************************************
-        ** configure these properties. Most of them will be copied to the plugins
-        ** manifest file. Property values will also show up in the list available
-        ** plugins: http://josm.openstreetmap.de/wiki/Plugins.
-        **
-        ************************************************
-    -->
+			<!-- Info on properties: http://josm.openstreetmap.de/wiki/Plugins -->
             <manifest>
 				<attribute name="Author" value="Ole Jørgen Brønner"/>
                 <attribute name="Plugin-Class" value="org.openstreetmap.josm.plugins.parallelway.ParallelWayPlugin"/>
                 <attribute name="Plugin-Date" value="${version.entry.commit.date}"/>
-                <attribute name="Plugin-Description" value="..."/>
-                <attribute name="Plugin-Icon" value="..."/>
-                <attribute name="Plugin-Link" value="..."/>
+                <attribute name="Plugin-Description" value="Create parallel copies of ways"/>
+				<attribute name="Plugin-Icon" value="images/mapmode/parallel.png"/>
+				<attribute name="Plugin-Link" value="http://wiki.openstreetmap.org/wiki/JOSM/Plugins/ParallelWay" />
                 <attribute name="Plugin-Mainversion" value="${plugin.main.version}"/>
-                <attribute name="Plugin-Version" value="${version.entry.commit.revision}"/>
+				<attribute name="Plugin-Version" value="${version.entry.commit.revision}"/>
             </manifest>
         </jar>
     </target>
 
-    <!--
-    **********************************************************
-    ** revision - extracts the current revision number for the
-    **    file build.number and stores it in the XML property
-    **    version.*
-    **********************************************************
-    -->
-    <target name="revision">
-
+	<!-- revision from svn -->
+    <target name="svn-revision">
         <exec append="false" output="REVISION" executable="svn" failifexecutionfails="false">
             <env key="LANG" value="C"/>
             <arg value="info"/>
@@ -127,21 +98,19 @@
         <delete file="REVISION"/>
     </target>
 
-    <!--
-    **********************************************************
-    ** clean - clean up the build environment
-    **********************************************************
-    -->
+	<!-- revision from git -->
+    <target name="revision">
+		<exec outputproperty="version.entry.commit.revision" executable="git-version-number" failifexecutionfails="true" />
+		<exec outputproperty="version.entry.commit.date" executable="git-commit-date" failifexecutionfails="true" />
+    </target>
+
+	<!-- clean - clean up the build environment -->
     <target name="clean">
         <delete dir="${plugin.build.dir}"/>
         <delete file="${plugin.jar}"/>
     </target>
 
-    <!--
-    **********************************************************
-    ** install - install the plugin in your local JOSM installation
-    **********************************************************
-    -->
+	<!-- install - install the plugin in your local JOSM installation -->
     <target name="install" depends="dist">
         <property environment="env"/>
         <condition property="josm.plugins.dir" value="${env.APPDATA}/JOSM/plugins" else="${user.home}/.josm/plugins">
