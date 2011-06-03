@@ -12,7 +12,6 @@ import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.Geometry;
@@ -154,8 +153,7 @@ public class ParallelWays {
         }
     }
 
-    // Draw helper lines instead like DrawAction ExtrudeAction?
-    public void commit(DataSet ds) {
+    public void commit() {
         SequenceCommand undoCommand = new SequenceCommand("Make parallel way(s)", makeAddWayAndNodesCommandList());
         Main.main.undoRedo.add(undoCommand);
     }

@@ -1,6 +1,6 @@
 package org.openstreetmap.josm.plugins.parallelway;
 
-// TODO: rewrite to use awt modifers flag instead. 
+// TODO: rewrite to use awt modifers flag instead.
 // Yeah, I had done that, but then I rm -rf'd my local repo. Make _frequent_ backups and use rm -rf carefully kids :(
 public class ModifiersSpec {
     static public final int ON = 1, OFF = 0, UNKNOWN = 2;
@@ -46,7 +46,7 @@ public class ModifiersSpec {
     }
 
     private boolean match(final int a, final boolean knownValue) {
-        return a == (knownValue ? ON : OFF);
+        return a == (knownValue ? ON : OFF) || a == UNKNOWN;
     }
     // does java have built in 3-state support?
 }

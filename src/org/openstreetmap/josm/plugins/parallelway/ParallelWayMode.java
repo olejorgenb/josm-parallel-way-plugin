@@ -199,15 +199,15 @@ public class ParallelWayMode extends MapMode implements AWTEventListener, MapVie
     private void updateAllPreferences() {
         updateModeLocalPreferences();
         // @formatter:off
-        initialMoveDelay = Main.pref.getInteger(prefKey("initial-move-delay"), -1);
         // @formatter:on
     }
 
     private void updateModeLocalPreferences() {
         // @formatter:off
-        snapThreshold   = Main.pref.getDouble (prefKey("snap-threshold"), 0.35);
-        snapDefault     = Main.pref.getBoolean(prefKey("snap-default"),      true);
-        copyTagsDefault = Main.pref.getBoolean(prefKey("copy-tags-default"), true);
+        snapThreshold    = Main.pref.getDouble (prefKey("snap-threshold"), 0.35);
+        snapDefault      = Main.pref.getBoolean(prefKey("snap-default"),      true);
+        copyTagsDefault  = Main.pref.getBoolean(prefKey("copy-tags-default"), true);
+        initialMoveDelay = Main.pref.getInteger(prefKey("initial-move-delay"), 200);
 
         snapModifierCombo           = new ModifiersSpec(getStringPref("snap-modifier-combo",             "?sC"));
         copyTagsModifierCombo       = new ModifiersSpec(getStringPref("copy-tags-modifier-combo",        "As?"));
@@ -446,29 +446,6 @@ public class ParallelWayMode extends MapMode implements AWTEventListener, MapVie
         return spec.matchWithKnown(alt, shift, ctrl);
     }
 
-    // annoying missing basic geometry capabilities..
-    static public class Vector {
-        public double x, y;
-
-        public Vector(double x, double y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public Vector(double x1, double y1, double x2, double y2) {
-            x = x2 - x1;
-            y = y2 - y1;
-        }
-
-        public Vector normalize() {
-            return null;
-        }
-
-        public double length() {
-            return Math.sqrt(x * x + y * y);
-        }
-    }
-
     @Override
     public void paint(Graphics2D g, MapView mv, Bounds bbox) {
         if (mode == Mode.dragging) {
@@ -476,6 +453,7 @@ public class ParallelWayMode extends MapMode implements AWTEventListener, MapVie
             if (Main.map.mapView == null)
                 return;
 
+            // FIXME: should clip the line
             Stroke refLineStroke = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 10.0f, new float[] {
                     2f, 2f }, 0f);
             g.setStroke(refLineStroke);
@@ -561,7 +539,7 @@ public class ParallelWayMode extends MapMode implements AWTEventListener, MapVie
                 }
             }
             pWays = new ParallelWays(sourceWays, copyTags, referenceWayIndex);
-            pWays.commit(null);
+            pWays.commit();
             getCurrentDataSet().setSelected(pWays.ways);
             return true;
         } catch (IllegalArgumentException e) {
