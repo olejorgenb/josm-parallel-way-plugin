@@ -320,7 +320,6 @@ public class ParallelWayMode extends MapMode implements AWTEventListener, MapVie
         // Other buttons are off limit, but we still get events.
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
-        System.err.println("release");
 
         if (!mouseHasBeenDragged) {
             // use point from press or click event? (or are these always the same)
@@ -543,7 +542,6 @@ public class ParallelWayMode extends MapMode implements AWTEventListener, MapVie
             getCurrentDataSet().setSelected(pWays.ways);
             return true;
         } catch (IllegalArgumentException e) {
-            //            System.err.println(e);
             pWays = null;
             return false;
         }
