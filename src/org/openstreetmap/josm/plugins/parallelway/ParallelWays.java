@@ -32,6 +32,7 @@ public class ParallelWays {
     private final EastNorth[] pts;
     private final EastNorth[] normals;
 
+    // Need a reference way to determine the direction of the offset when we manage multiple ways
     public ParallelWays(Collection<Way> sourceWays, boolean copyTags, int refWayIndex) {
         // Possible/sensible to use PrimetiveDeepCopy here?
 
@@ -70,26 +71,15 @@ public class ParallelWays {
         //// Ugly method of ensuring that the offset isn't inverted. I'm sure there is a better and more elegant way, but I'm starting to get sleepy, so I do this for now.
         {
             Way refWay = ways.get(refWayIndex);
-            boolean refWayReversed = false;
-            if (isClosedPath()) { // Nodes occur more than once in the list
-                if (refWay.firstNode() == sortedNodes.get(0) && refWay.lastNode() == sortedNodes.get(0)) {
-                    refWayReversed = sortedNodes.get(1) != refWay.getNode(1);
-                } else if (refWay.lastNode() == sortedNodes.get(0)) {
-                    refWayReversed =
-                            sortedNodes.get(sortedNodes.size() - 1) != refWay.getNode(refWay.getNodesCount() - 1);
-                } else if (refWay.firstNode() == sortedNodes.get(0)) {
-                    refWayReversed = sortedNodes.get(1) != refWay.getNode(1);
-                } else {
-                    refWayReversed =
-                            sortedNodes.indexOf(refWay.firstNode()) > sortedNodes.indexOf(refWay.lastNode());
+            boolean refWayReversed = true;
+            for (int i = 0; i < sortedNodes.size() - 1; i++) {
+                if (sortedNodes.get(i) == refWay.firstNode() && sortedNodes.get(i + 1) == refWay.getNode(1)) {
+                    refWayReversed = false;
+                    break;
                 }
-
-            } else {
-                refWayReversed = sortedNodes.indexOf(refWay.firstNode()) > sortedNodes.indexOf(refWay.lastNode());
             }
             if (refWayReversed) {
                 Collections.reverse(sortedNodes); // need to keep the orientation of the reference way.
-                System.err.println("reversed!");
             }
         }
 
