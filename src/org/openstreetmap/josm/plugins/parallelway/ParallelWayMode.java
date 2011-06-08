@@ -525,6 +525,7 @@ public class ParallelWayMode extends MapMode implements AWTEventListener, MapVie
                     referenceWayIndex = i;
                     break;
                 }
+                i++;
             }
             pWays = new ParallelWays(sourceWays, copyTags, referenceWayIndex);
             pWays.commit();

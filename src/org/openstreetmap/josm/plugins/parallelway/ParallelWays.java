@@ -36,6 +36,7 @@ public class ParallelWays {
         // Possible/sensible to use PrimetiveDeepCopy here?
 
         //// Make a deep copy of the ways, keeping the copied ways connected
+        // TODO: This assumes the first/last nodes of the ways are the only possible shared nodes.
         HashMap<Node, Node> splitNodeMap = new HashMap<Node, Node>(sourceWays.size());
         for (Way w : sourceWays) {
             if (!splitNodeMap.containsKey(w.firstNode())) {
@@ -114,6 +115,10 @@ public class ParallelWays {
         return sortedNodes.get(0) == sortedNodes.get(sortedNodes.size() - 1);
     }
 
+    /**
+     * Offsets the way(s) d units. Positive d means to the left (relative to the reference way)
+     * @param d
+     */
     public void changeOffset(double d) {
         //// This is the core algorithm:
         /* 1. Calculate a parallel line, offset by 'd', to each segment in
