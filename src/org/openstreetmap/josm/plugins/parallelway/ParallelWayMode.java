@@ -395,15 +395,6 @@ public class ParallelWayMode extends MapMode implements AWTEventListener, MapVie
             if (!isModifiersValidForDragMode())
                 return;
             if (!initParallelWays(mousePressedPos, copyTags)) {
-                // TODO: Not ideal feedback. Maybe changing the cursor could be a good mechanism?
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        tr("ParallelWayAction\n" +
-                                "The ways selected must form a simple branchless path"),
-                        tr("Make parallel way error"),
-                        JOptionPane.INFORMATION_MESSAGE);
-                // The error dialog prevents us from getting the mouseReleased event
-                resetMouseTrackingState();
                 return;
             }
             setMode(Mode.dragging);
@@ -521,8 +512,6 @@ public class ParallelWayMode extends MapMode implements AWTEventListener, MapVie
         if (referenceSegment == null)
             return false;
 
-        // The collection returned is very inefficient so we collect it in an ArrayList
-        // Not sure if the list is iterated multiple times any more...
         if (!sourceWays.contains(referenceSegment.way)) {
             clearSourceWays();
             addSourceWay(referenceSegment.way);
@@ -542,6 +531,15 @@ public class ParallelWayMode extends MapMode implements AWTEventListener, MapVie
             getCurrentDataSet().setSelected(pWays.ways);
             return true;
         } catch (IllegalArgumentException e) {
+            // TODO: Not ideal feedback. Maybe changing the cursor could be a good mechanism?
+            JOptionPane.showMessageDialog(
+                    Main.parent,
+                    tr("ParallelWayAction\n" +
+                            "The ways selected must form a simple branchless path"),
+                    tr("Make parallel way error"),
+                    JOptionPane.INFORMATION_MESSAGE);
+            // The error dialog prevents us from getting the mouseReleased event
+            resetMouseTrackingState();
             pWays = null;
             return false;
         }
