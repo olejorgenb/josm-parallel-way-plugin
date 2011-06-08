@@ -58,7 +58,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * Need at least a setting for step length
  *
- * 4. Visual cues? Highlight source path, draw offset line, etc?
+ * 4. Visual cues could be better
  *
  * 5. Cursors (Half-done)
  *
@@ -131,7 +131,7 @@ public class ParallelWayMode extends MapMode implements AWTEventListener, MapVie
     private EastNorth helperLineEnd;
 
     public ParallelWayMode(MapFrame mapFrame) {
-        super(tr("Parallel"), "parallel", tr("Makes a paralell copy of the selected way(s)"), Shortcut
+        super(tr("Parallel"), "parallel", tr("Make parallel copies of ways"), Shortcut
                 .registerShortcut("mapmode:parallel", tr("Mode: {0}", tr("Parallel")), KeyEvent.VK_P,
                         Shortcut.GROUP_EDIT, Shortcut.SHIFT_DEFAULT), mapFrame, ImageProvider.getCursor("normal",
                         "selection"));
@@ -281,6 +281,17 @@ public class ParallelWayMode extends MapMode implements AWTEventListener, MapVie
         return true;
     }
 
+    private boolean sanityCheck() {
+        // @formatter:off
+        boolean areWeSane =
+            mv.isActiveLayerVisible() &&
+            mv.isActiveLayerDrawable() &&
+            ((Boolean) this.getValue("active"));
+        // @formatter:on
+        assert (areWeSane); // mad == bad
+        return areWeSane;
+    }
+
     @Override
     public void mousePressed(MouseEvent e) {
         updateModifiersState(e);
@@ -288,11 +299,7 @@ public class ParallelWayMode extends MapMode implements AWTEventListener, MapVie
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
 
-        if (!mv.isActiveLayerVisible())
-            return;
-        if (!mv.isActiveLayerDrawable())
-            return;
-        if (!(Boolean) this.getValue("active"))
+        if(sanityCheck() == false)
             return;
 
         updateFlagsOnlyChangeableOnPress();
@@ -308,10 +315,6 @@ public class ParallelWayMode extends MapMode implements AWTEventListener, MapVie
         mousePressedPos = e.getPoint();
         mousePressedTime = System.currentTimeMillis();
 
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
     }
 
     @Override
@@ -440,10 +443,10 @@ public class ParallelWayMode extends MapMode implements AWTEventListener, MapVie
     public void paint(Graphics2D g, MapView mv, Bounds bbox) {
         if (mode == Mode.dragging) {
             // sanity checks
-            if (Main.map.mapView == null)
+            if (mv == null)
                 return;
 
-            // FIXME: should clip the line
+            // FIXME: should clip the line (gets insanely slow when zoomed in on a very long line
             Stroke refLineStroke = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 10.0f, new float[] {
                     2f, 2f }, 0f);
             g.setStroke(refLineStroke);
@@ -459,7 +462,6 @@ public class ParallelWayMode extends MapMode implements AWTEventListener, MapVie
             p2 = mv.getPoint(helperLineEnd);
             g.drawLine(p1.x, p1.y, p2.x, p2.y);
         }
-
     }
 
     private boolean isModifiersValidForDragMode() {
@@ -475,6 +477,7 @@ public class ParallelWayMode extends MapMode implements AWTEventListener, MapVie
         snap = snapDefault != matchesCurrentModifiers(snapModifierCombo);
     }
 
+    //// We keep the source ways and the selection in sync so the user can see the source way's tags
     private void addSourceWay(Way w) {
         assert (sourceWays != null);
         getCurrentDataSet().addSelected(w);
